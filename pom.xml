@@ -4,7 +4,7 @@
 
   <groupId>com.stephan</groupId>
   <artifactId>app-blueprint-swing</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>App Blueprint Swing</name>
   <description>Desktop app blueprint with Java, Swing, and SQLite</description>
 
