@@ -1,0 +1,78 @@
+name: Build and Package
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            package_type: deb
+            artifact_name: linux-deb
+            artifact_glob: dist/*.deb
+          - os: macos-latest
+            package_type: dmg
+            artifact_name: macos-dmg
+            artifact_glob: dist/*.dmg
+          - os: windows-latest
+            package_type: exe
+            artifact_name: windows-exe
+            artifact_glob: dist/*.exe
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Install Linux packaging dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fakeroot
+
+      - name: Install WiX Toolset
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          choco install wixtoolset --yes
+
+      - name: Build fat jar
+        run: mvn -B -DskipTests package
+
+      - name: Create native installer with jpackage
+        shell: bash
+        run: |
+          mkdir -p build/jpackage/input
+          cp target/app-blueprint-swing-0.1.0-all.jar build/jpackage/input/app-blueprint-swing.jar
+
+          jpackage \
+            --name AppBlueprintSwing \
+            --app-version 0.1.0 \
+            --input build/jpackage/input \
+            --main-jar app-blueprint-swing.jar \
+            --main-class com.stephan.appblueprintswing.AppBlueprintSwingApplication \
+            --dest dist \
+            --type "${{ matrix.package_type }}"
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_glob }}
+          if-no-files-found: error
+
