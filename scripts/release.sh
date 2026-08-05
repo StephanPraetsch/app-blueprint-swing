@@ -40,8 +40,6 @@ mvn -q versions:set -DnewVersion="$next_version" -DgenerateBackupPoms=false
 
 git add pom.xml
 git commit -m "Release v$next_version"
-git tag "v$next_version"
-git push --follow-tags
+git tag -a "v$next_version" -m "Release v$next_version"
 
-echo "Released v$next_version triggered"
-
+echo "created v$next_version"

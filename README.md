@@ -26,19 +26,19 @@ Use only tags in the format `v<semver>`, for example `v0.0.2`.
 ### Patch release
 
 ```bash
-./scripts/release.sh patch
+./scripts/release.sh patch && git push --follow-tags
 ```
 
 ### Minor release
 
 ```bash
-./scripts/release.sh minor
+./scripts/release.sh minor && git push --follow-tags
 ```
 
 ### Major release
 
 ```bash
-./scripts/release.sh major
+./scripts/release.sh major && git push --follow-tags
 ```
 
 Pushing a tag like `v0.0.2` triggers `.github/workflows/build-package.yml` and creates a GitHub release with installers for Linux, macOS, and Windows.
