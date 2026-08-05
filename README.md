@@ -21,7 +21,11 @@ java -jar target/app-blueprint-swing-<version>-all.jar
 
 ## Releasing a New Version
 
-Use only tags in the format `v<semver>`, for example `v0.0.2`.
+Use only tags in the format `v<semver>`, for example `v1.0.0`.
+
+> [!WARNING]
+> macOS DMG packaging requires a version `>= 1.0.0`.
+> Do not create macOS releases with `v0.x.y` tags because `jpackage` rejects major version `0`.
 
 ### Patch release
 
@@ -41,7 +45,7 @@ Use only tags in the format `v<semver>`, for example `v0.0.2`.
 ./scripts/release.sh major && git push --follow-tags
 ```
 
-Pushing a tag like `v0.0.2` triggers `.github/workflows/build-package.yml` and creates a GitHub release with installers for Linux, macOS, and Windows.
+Pushing a tag like `v1.0.0` triggers `.github/workflows/build-package.yml` and creates a GitHub release with installers for Linux, macOS, and Windows.
 
 ### Linux: `.deb`
 
